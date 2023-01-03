@@ -9,6 +9,7 @@ dropArea.addEventListener("dragenter", highlight, false);
 dropArea.addEventListener("dragover", highlight, false);
 dropArea.addEventListener("dragleave", unhighlight, false);
 dropArea.addEventListener("drop", handleDrop, false);
+document.addEventListener("paste", handlePaste, false);
 
 function highlight(e) {
 	e.preventDefault();
@@ -56,6 +57,20 @@ function handleFiles(files) {
 	unhighlight();
 }
 
+function handlePaste(event) {
+	if (event.clipboardData.items) {
+		const file = event.clipboardData.items[0].getAsFile();
+		if (file.type.startsWith("image/")) {
+			const img = document.createElement("img");
+			img.src = URL.createObjectURL(file);
+
+			img.onload = () => {
+				distortImage(img);
+			};
+		}
+	}
+}
+
 async function initialLoad() {
 	await faceapi.loadSsdMobilenetv1Model(FACE_MODELS_URL);
 
@@ -83,6 +98,7 @@ async function distortImage(img) {
 		strength *= multiplier;
 
 		canvas.bulgePinch(centerX, centerY, maxRadius, strength);
+		// Apply second bulge on forehead
 		canvas.bulgePinch(centerX, centerY - (maxRadius / 2), maxRadius * 0.25, strength * 0.25);
 	}
 
