@@ -4,6 +4,7 @@ const dropArea = document.getElementById("drop-area");
 const loadingArea = document.getElementById("loading-area");
 const strengthSlider = document.getElementById("strength-slider");
 const strengthSliderValue = document.getElementById("strength-slider-value");
+const clearImagesBtn = document.getElementById("clear-images");
 
 dropArea.addEventListener("dragenter", highlight, false);
 dropArea.addEventListener("dragover", highlight, false);
@@ -59,14 +60,17 @@ function handleFiles(files) {
 
 function handlePaste(event) {
 	if (event.clipboardData.items) {
-		const file = event.clipboardData.items[0].getAsFile();
-		if (file.type.startsWith("image/")) {
-			const img = document.createElement("img");
-			img.src = URL.createObjectURL(file);
+		for (const item of event.clipboardData.items) {
+			if (item.kind === "file" && item.type.startsWith("image/")) {
+				const file = item.getAsFile();
 
-			img.onload = () => {
-				distortImage(img);
-			};
+				const img = document.createElement("img");
+				img.src = URL.createObjectURL(file);
+
+				img.onload = () => {
+					distortImage(img);
+				};
+			}
 		}
 	}
 }
@@ -108,6 +112,12 @@ async function distortImage(img) {
 
 strengthSlider.oninput = () => {
 	strengthSliderValue.textContent = strengthSlider.value;
+};
+
+clearImagesBtn.onclick = ()=>{
+	for (const canvas of [...document.querySelectorAll("canvas")]) {
+		canvas.remove();
+	}
 };
 
 initialLoad();
