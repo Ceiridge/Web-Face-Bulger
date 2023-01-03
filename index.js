@@ -1,5 +1,9 @@
+const FACE_MODELS_URL = "https://justadudewhohacks.github.io/face-api.js/models/";
+
 const dropArea = document.getElementById("drop-area");
 const loadingArea = document.getElementById("loading-area");
+const strengthSlider = document.getElementById("strength-slider");
+const strengthSliderValue = document.getElementById("strength-slider-value");
 
 dropArea.addEventListener("dragenter", highlight, false);
 dropArea.addEventListener("dragover", highlight, false);
@@ -53,7 +57,7 @@ function handleFiles(files) {
 }
 
 async function initialLoad() {
-	await faceapi.loadSsdMobilenetv1Model("https://justadudewhohacks.github.io/face-api.js/models/");
+	await faceapi.loadSsdMobilenetv1Model(FACE_MODELS_URL);
 
 	loadingArea.style.display = "none";
 	dropArea.style.display = "inherit";
@@ -67,16 +71,27 @@ async function distortImage(img) {
 	const texture = canvas.texture(img);
 	canvas.draw(texture);
 
+	const multiplier = parseFloat(strengthSlider.value);
+
 	for (const face of faces) {
 		const centerX = face.box.x + (face.box.width / 2);
 		const centerY = face.box.y + (face.box.height / 2);
-		const maxRadius = Math.max(face.box.width, face.box.height) / 2;
 
-		canvas.bulgePinch(centerX, centerY, maxRadius, 0.66); // TODO: Test strength
+		let strength = 0.66;
+		let maxRadius = Math.max(face.box.width, face.box.height) / 2;
+		maxRadius *= multiplier;
+		strength *= multiplier;
+
+		canvas.bulgePinch(centerX, centerY, maxRadius, strength);
+		canvas.bulgePinch(centerX, centerY - (maxRadius / 2), maxRadius * 0.25, strength * 0.25);
 	}
 
 	canvas.update();
 	document.body.appendChild(canvas);
 }
+
+strengthSlider.oninput = () => {
+	strengthSliderValue.textContent = strengthSlider.value;
+};
 
 initialLoad();
