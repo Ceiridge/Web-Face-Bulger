@@ -7,13 +7,18 @@
 
 <body>
 <div id="loading-area">Please wait while the face detection AI model is loading...</div>
+<p>This is only a proof-of-concept.</p>
 
 <input type="range" id="strength-slider" min="0" max="5" value="1" step="0.1">
 <label for="strength-slider">Strength Multiplier <span id="strength-slider-value">1.0</span></label>
 <button id="clear-images">Remove all images</button>
 
-<div id="drop-area" style="display: none">Drop or paste your image here</div>
+<div id="drop-area" style="display: none">Drop or paste your image or video (MP4,H.264) here</div>
 
+<script type="module">
+	import getVideoFrames from "https://deno.land/x/get_video_frames@v0.0.8/mod.js";
+	window.getVideoFrames = getVideoFrames;
+</script>
 <script src="lib/glfx.js"></script>
 <script src="lib/face-api.min.js"></script>
 <script src="index.js"></script>
