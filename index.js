@@ -24,7 +24,7 @@ function showLoading(element) {
     spinner.textContent = '🤔';
     overlay.appendChild(spinner); // DEAR GOD HE'S SPINNING
     element.style.position = 'relative';
-	element.style.borderRadius = '100%';
+	element.style.borderRadius = '0.5rem';
 	element.style.padding = '1.5rem';
     element.appendChild(overlay);
     return overlay;
